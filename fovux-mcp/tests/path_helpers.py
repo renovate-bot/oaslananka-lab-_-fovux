@@ -13,7 +13,7 @@ def _find_root(start: Path, markers: tuple[tuple[str, ...], ...], label: str) ->
     for parent in (start, *start.parents):
         if all(_has_marker(parent, marker) for marker in markers):
             return parent
-    raise AssertionError(f"Could not locate {label} from start={start} with markers={markers}")
+    raise RuntimeError(f"Could not locate {label} from start={start} with markers={markers}")
 
 
 def find_package_root(start: Path) -> Path:
