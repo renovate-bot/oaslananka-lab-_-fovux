@@ -49,5 +49,26 @@ def test_find_package_root_reports_missing_markers(tmp_path: Path) -> None:
     test_file.parent.mkdir(parents=True)
     test_file.write_text("# test\n")
 
-    with pytest.raises(RuntimeError, match="Could not locate fovux-mcp package root"):
+    with pytest.raises(RuntimeError) as exc_info:
         find_package_root(test_file)
+    message = str(exc_info.value)
+    assert "Could not locate fovux-mcp package root" in message
+    assert f"start={test_file.resolve()}" in message
+    assert "markers=" in message
+    assert "pyproject.toml" in message
+    assert "check_tool_docs.py" in message
+
+
+def test_find_monorepo_root_reports_missing_markers(tmp_path: Path) -> None:
+    test_file = tmp_path / "fovux-mcp" / "tests" / "test_missing.py"
+    test_file.parent.mkdir(parents=True)
+    test_file.write_text("# test\n")
+
+    with pytest.raises(RuntimeError) as exc_info:
+        find_monorepo_root(test_file)
+    message = str(exc_info.value)
+    assert "Could not locate monorepo root" in message
+    assert f"start={test_file.resolve()}" in message
+    assert "markers=" in message
+    assert "check_versions.py" in message
+    assert "pyproject.toml" in message
